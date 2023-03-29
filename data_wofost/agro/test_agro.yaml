@@ -1,0 +1,12 @@
+2019-01-01: &id001
+  CropCalendar:
+    crop_end_date: 2020-11-25
+    crop_end_type: harvest
+    crop_name: barley
+    crop_start_date: 2020-04-23
+    crop_start_type: sowing
+    max_duration: 264
+    variety_name: Spring_barley_301
+  StateEvents: null
+  TimedEvents: null
+2020-01-01: *id001
