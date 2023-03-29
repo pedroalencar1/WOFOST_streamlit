@@ -14,8 +14,6 @@ Notes
 
 # %% LOAD PACKAGES AND SET PATHS
 
-# system
-import sys, os, subprocess\
 
 # streamlit and dashboard apps
 import streamlit as st
@@ -33,10 +31,7 @@ from matplotlib.gridspec import GridSpec
 from matplotlib.dates import DateFormatter
 import seaborn as sns
 # import plotly.graph_objects as go
-import ipyleaflet as L
-import folium
-from folium.plugins import MarkerCluster
-import pydeck as pdk
+
 
 
 # data
