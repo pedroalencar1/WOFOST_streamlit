@@ -6,4 +6,4 @@ numpy
 datetime
 timestamp
 pcse
-yaml
+PyYAML
