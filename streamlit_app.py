@@ -288,83 +288,85 @@ if st.button('Run Simulation', type = "primary"):
     text = "**Weather data retrieved from {} (station id: {}).**".format(code.SOUNAME.capitalize(), code.STAID)    
     st.write(text)
 
+    col41, col42, col43 = st.columns([1,4,1])
     
-    ### Fig 1 
-    plt.rcParams.update({'font.size': 6,
-                         'text.color': "#242630",
-                         'font.family': "TyfoonSans"})
-    fig1 = plt.figure(constrained_layout=True)
-    gs = GridSpec(3, 2, figure=fig1)
-    fig1.subplots_adjust(hspace=0.5, wspace=0.35)
-    date_form = DateFormatter("%m")
+    with col42:    
+        ### Fig 1 
+        plt.rcParams.update({'font.size': 6,
+                            'text.color': "#242630",
+                            'font.family': "TyfoonSans"})
+        fig1 = plt.figure(constrained_layout=True)
+        gs = GridSpec(3, 2, figure=fig1)
+        fig1.subplots_adjust(hspace=0.5, wspace=0.35)
+        date_form = DateFormatter("%m")
 
-    ax1 = fig1.add_subplot(gs[0, 0]).xaxis.set_major_formatter(date_form)
-    sns.lineplot(data=df, x = 'day', y = 'TAGP', hue = 'type', errorbar=None, legend=False,
-                palette = ['red', 'blue']).set(
-                    title='Total above ground production', xlabel = None, 
-                    xticklabels=[], ylabel='TAGP (Mg/ha)')
+        ax1 = fig1.add_subplot(gs[0, 0]).xaxis.set_major_formatter(date_form)
+        sns.lineplot(data=df, x = 'day', y = 'TAGP', hue = 'type', errorbar=None, legend=False,
+                    palette = ['red', 'blue']).set(
+                        title='Total above ground production', xlabel = None, 
+                        xticklabels=[], ylabel='TAGP (Mg/ha)')
 
-    ax2 = fig1.add_subplot(gs[0, 1]).xaxis.set_major_formatter(date_form)
-    sns.lineplot(data=df, x = 'day', y = 'LAI', hue = 'type', errorbar=None, legend=False,
-                palette = ['red', 'blue']).set(
-                    title='Leaf area index', xlabel = None, xticklabels=[], ylabel='LAI (-)')
+        ax2 = fig1.add_subplot(gs[0, 1]).xaxis.set_major_formatter(date_form)
+        sns.lineplot(data=df, x = 'day', y = 'LAI', hue = 'type', errorbar=None, legend=False,
+                    palette = ['red', 'blue']).set(
+                        title='Leaf area index', xlabel = None, xticklabels=[], ylabel='LAI (-)')
 
-    ax3 = fig1.add_subplot(gs[1, 0]).xaxis.set_major_formatter(date_form)
-    sns.lineplot(data=df, x = 'day', y = 'TWSO', hue = 'type', errorbar=None, legend=False,
-                palette = ['red', 'blue']).set(
-                    title='Total weight of storage organs',xlabel = 'Month', ylabel='TWSO (Mg/ha)')
+        ax3 = fig1.add_subplot(gs[1, 0]).xaxis.set_major_formatter(date_form)
+        sns.lineplot(data=df, x = 'day', y = 'TWSO', hue = 'type', errorbar=None, legend=False,
+                    palette = ['red', 'blue']).set(
+                        title='Total weight of storage organs',xlabel = 'Month', ylabel='TWSO (Mg/ha)')
 
-    ax4 = fig1.add_subplot(gs[1, 1]).xaxis.set_major_formatter(date_form)
-    sns.lineplot(data=df, x = 'day', y = 'TRA', hue = 'type', errorbar=None, legend=False,
-                palette = ['red', 'blue']).set(
-                    title='Transpiration', xlabel = 'Month', ylabel="TRA (mm/day)")
+        ax4 = fig1.add_subplot(gs[1, 1]).xaxis.set_major_formatter(date_form)
+        sns.lineplot(data=df, x = 'day', y = 'TRA', hue = 'type', errorbar=None, legend=False,
+                    palette = ['red', 'blue']).set(
+                        title='Transpiration', xlabel = 'Month', ylabel="TRA (mm/day)")
 
-    ax5 = fig1.add_subplot(gs[2, :]).xaxis.set_major_formatter(date_form)
-    sns.lineplot(data=df, x = 'day', y = 'SM', hue = 'type', errorbar=None, legend=False,
-                palette = ['red', 'blue']).set(
-                    title='Soil Moisture', xlabel = 'Month', ylabel="SM (-)")
-    sns.lineplot(data=df_results_wlp, x = 'day', y = 'smw', errorbar=None, legend=True, color="grey",
-                    linewidth = 1)  
-    
+        ax5 = fig1.add_subplot(gs[2, :]).xaxis.set_major_formatter(date_form)
+        sns.lineplot(data=df, x = 'day', y = 'SM', hue = 'type', errorbar=None, legend=False,
+                    palette = ['red', 'blue']).set(
+                        title='Soil Moisture', xlabel = 'Month', ylabel="SM (-)")
+        sns.lineplot(data=df_results_wlp, x = 'day', y = 'smw', errorbar=None, legend=True, color="grey",
+                        linewidth = 1)  
+        
+                        
+        fig1.suptitle('Crop gaps {}'.format(year)) # or plt.suptitle('Main title')    
+        st.pyplot(fig1)
+        
+        ### Fig 2
+        weather = df_weather
+        weather["RAIN"] = weather["RAIN"]*10
+        weather["ET0"] = weather["ET0"]*10
+        weather["TEMP"] = (weather["TMAX"] +  weather["TMIN"])/2    
+        
+        fig2 = plt.figure(constrained_layout=True)
+        gs = GridSpec(3, 1, figure=fig2)
+        fig2.subplots_adjust(hspace=0.5, wspace=0.35)
+        date_form = DateFormatter("%m")
+        
+        ax1 = fig2.add_subplot(gs[0, 0]).xaxis.set_major_formatter(date_form)
+        sns.lineplot(data=weather, x = 'DAY', y = 'RAIN', errorbar=None, color = 'blue',legend=False,
+                    ).set(title='Precipitation', xlabel = None, xticklabels=[],
+                            ylabel = "P (mm/day)")
+        
+        ax2 = fig2.add_subplot(gs[1, 0]).xaxis.set_major_formatter(date_form)
+        sns.lineplot(data=weather, x = 'DAY', y = 'TEMP', errorbar=None, legend=False, color="blue",
+                    ).set(title='Temperature', xlabel = None, xticklabels=[],
+                            ylabel = "T (Celcius)")
+        sns.lineplot(data=weather, x = 'DAY', y = 'TMIN', errorbar=None, legend=False, color="grey",
+                        linewidth = 0.5).set(title='Temperature', xlabel = None, xticklabels=[],
+                            ylabel = "T (Celcius)")    
+        sns.lineplot(data=weather, x = 'DAY', y = 'TMAX', errorbar=None, legend=False, color="grey",
+                        linewidth = 0.5).set(title='Temperature', xlabel = None, xticklabels=[],
+                            ylabel = "T (Celcius)")    
+
+        
+        ax3 = fig2.add_subplot(gs[2, 0]).xaxis.set_major_formatter(date_form)
+        sns.lineplot(data=weather, x = 'DAY', y = 'ET0', errorbar=None, legend=False,color="blue",
+                    ).set(title='Potential Evapotranspiration {}'.format(year), xlabel = "Month",
+                            ylabel = "ET0 (mm/day)")  
                     
-    fig1.suptitle('Crop gaps {}'.format(year)) # or plt.suptitle('Main title')    
-    st.pyplot(fig1)
-    
-    ### Fig 2
-    weather = df_weather
-    weather["RAIN"] = weather["RAIN"]*10
-    weather["ET0"] = weather["ET0"]*10
-    weather["TEMP"] = (weather["TMAX"] +  weather["TMIN"])/2    
-    
-    fig2 = plt.figure(constrained_layout=True)
-    gs = GridSpec(3, 1, figure=fig2)
-    fig2.subplots_adjust(hspace=0.5, wspace=0.35)
-    date_form = DateFormatter("%m")
-    
-    ax1 = fig2.add_subplot(gs[0, 0]).xaxis.set_major_formatter(date_form)
-    sns.lineplot(data=weather, x = 'DAY', y = 'RAIN', errorbar=None, color = 'blue',legend=False,
-                ).set(title='Precipitation', xlabel = None, xticklabels=[],
-                        ylabel = "P (mm/day)")
-    
-    ax2 = fig2.add_subplot(gs[1, 0]).xaxis.set_major_formatter(date_form)
-    sns.lineplot(data=weather, x = 'DAY', y = 'TEMP', errorbar=None, legend=False, color="blue",
-                ).set(title='Temperature', xlabel = None, xticklabels=[],
-                        ylabel = "T (Celcius)")
-    sns.lineplot(data=weather, x = 'DAY', y = 'TMIN', errorbar=None, legend=False, color="grey",
-                    linewidth = 0.5).set(title='Temperature', xlabel = None, xticklabels=[],
-                        ylabel = "T (Celcius)")    
-    sns.lineplot(data=weather, x = 'DAY', y = 'TMAX', errorbar=None, legend=False, color="grey",
-                    linewidth = 0.5).set(title='Temperature', xlabel = None, xticklabels=[],
-                        ylabel = "T (Celcius)")    
-
-    
-    ax3 = fig2.add_subplot(gs[2, 0]).xaxis.set_major_formatter(date_form)
-    sns.lineplot(data=weather, x = 'DAY', y = 'ET0', errorbar=None, legend=False,color="blue",
-                ).set(title='Potential Evapotranspiration {}'.format(year), xlabel = "Month",
-                        ylabel = "ET0 (mm/day)")  
-                
-    fig2.suptitle('Weather variables {}'.format(year)) 
-    st.pyplot(fig2)
+        fig2.suptitle('Weather variables {}'.format(year)) 
+        st.pyplot(fig2)
 
    
 
