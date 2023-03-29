@@ -20,7 +20,7 @@ import streamlit as st
 st.set_page_config(layout="wide")
 
 # system 
-import sys, os, subprocess
+import sys, os
 
 # plotting
 import matplotlib
