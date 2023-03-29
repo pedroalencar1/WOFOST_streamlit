@@ -1,4 +1,4 @@
-#WOFOST App
+# WOFOST App
 
 This app used weather data from the [DWD](https://www.dwd.de/DE/Home/home_node.html) and default parameters from the Python Crop Simulation Environment ([PCSE](https://github.com/ajwdewit/pcse)). It was developed by [Pedro Alencar](https://www.oekohydro.tu-berlin.de/menue/team/pedro_alencar/) and is independent of the WOFOST developing group. 
 
