@@ -18,6 +18,8 @@ Notes
 # streamlit and dashboard apps
 import streamlit as st
 st.set_page_config(layout="wide")
+# st.echarts(options=options,map=map, height = "500px")
+
 
 # system 
 import sys, os
@@ -31,6 +33,12 @@ from matplotlib.gridspec import GridSpec
 from matplotlib.dates import DateFormatter
 import seaborn as sns
 # import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+import plotly.express as px
+import pyautogui
+
+
 
 
 
@@ -103,28 +111,38 @@ with col1:
     lat = st.number_input(label = "Latitude",
                     min_value=0.,
                     max_value= 90., 
-                    value = 52.4,
+                    value = 51.2,
                     key = "lat",
                     step=0.1,format="%.1f")    
     lon = st.number_input(label = "Longitude",
                     min_value=0.,
                     max_value= 90., 
-                    value = 13.1,
+                    value = 10.5,
                     key = "lon",
                     step=0.1,format="%.1f")
     
-    df = pd.DataFrame({'lat': [lat], 'lon': [lon]})    
-    st.map(df, zoom = 3)
-        
-    # my_map = folium.Map(location = [lat, lon], zoom_start = 4)
-    # folium.Marker(location=[lat, lon]).add_to(my_map)
-    # my_map
+    df = pd.DataFrame({'lat': [lat], 'lon': [lon]})
+    # st.map(df, zoom = 4.5)
+    
+    screen_width = pyautogui.size()[0]
+
+    fig = px.scatter_mapbox(df, lat="lat", lon="lon", zoom=4, size = "lon",
+                            height=320, width = 0.285*screen_width,
+                            color_discrete_sequence=["#b60018"],
+                            size_max = 8)
+    # "open-street-map", "carto-positron", "carto-darkmatter", 
+    # "stamen-terrain", "stamen-toner" or "stamen-watercolor" 
+    fig.update_layout(mapbox_style="carto-positron")
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    # fig.show()  
+    
+    st.plotly_chart(fig)
               
 with col2:
     st.write('<p style="font-size:20px"><b>Crop and soil</b></p>',
                      unsafe_allow_html=True)
     soil = st.selectbox(label = "Soil Class",
-                        options = ("EC1 - Coarse: C<18% + S>65% (BBr)",
+                        options = ("EC1 - Coarse: C<18% + S>65%",
                             "EC2 - Medium: 18<C<35% + S>15%;  C<18% + 15<S<65%",
                             "EC3 - Medium fine: C<35%+ S<15%",
                             "EC4 - Fine: 35<C<60%",
@@ -269,8 +287,8 @@ if st.button('Run Simulation', type = "primary"):
     st.write(
     """
     <style>
-    r { color: Red }
-    z { color: Blue }
+    r { color: #b60018 }
+    z { color: #0018b6 }
     </style>
 
     Bellow we present some plots with:
@@ -287,94 +305,165 @@ if st.button('Run Simulation', type = "primary"):
     
     text = "**Weather data retrieved from {} (station id: {}).**".format(code.SOUNAME.capitalize(), code.STAID)    
     st.write(text)
+    
+    df = pd.DataFrame(data=df)  
+    df = df.fillna(0)
+    df_results_wlp["day"] = df_results_wlp.index
+    df_wlp = df[df["type"] == "wlp"]
+    df_pp = df[df["type"] == "pp"]
+    
+    df_print = pd.concat([df_wlp.tail(1), df_pp.tail(1)]).reset_index(drop=True)
+    
+    # st.write(" ")
+    # st.write("**Summary:**")
+    # st.dataframe(df_print)
 
     col41, col42, col43 = st.columns([1,4,1])
-    
-    with col42:    
-        ### Fig 1 
-        plt.rcParams.update({'font.size': 6,
-                            'text.color': "#242630",
-                            'font.family': "TyfoonSans"})
-        fig1 = plt.figure(constrained_layout=True)
-        gs = GridSpec(3, 2, figure=fig1)
-        fig1.subplots_adjust(hspace=0.5, wspace=0.35)
-        date_form = DateFormatter("%m")
 
-        ax1 = fig1.add_subplot(gs[0, 0]).xaxis.set_major_formatter(date_form)
-        sns.lineplot(data=df, x = 'day', y = 'TAGP', hue = 'type', errorbar=None, legend=False,
-                    palette = ['red', 'blue']).set(
-                        title='Total above ground production', xlabel = None, 
-                        xticklabels=[], ylabel='TAGP (Mg/ha)')
-
-        ax2 = fig1.add_subplot(gs[0, 1]).xaxis.set_major_formatter(date_form)
-        sns.lineplot(data=df, x = 'day', y = 'LAI', hue = 'type', errorbar=None, legend=False,
-                    palette = ['red', 'blue']).set(
-                        title='Leaf area index', xlabel = None, xticklabels=[], ylabel='LAI (-)')
-
-        ax3 = fig1.add_subplot(gs[1, 0]).xaxis.set_major_formatter(date_form)
-        sns.lineplot(data=df, x = 'day', y = 'TWSO', hue = 'type', errorbar=None, legend=False,
-                    palette = ['red', 'blue']).set(
-                        title='Total weight of storage organs',xlabel = 'Month', ylabel='TWSO (Mg/ha)')
-
-        ax4 = fig1.add_subplot(gs[1, 1]).xaxis.set_major_formatter(date_form)
-        sns.lineplot(data=df, x = 'day', y = 'TRA', hue = 'type', errorbar=None, legend=False,
-                    palette = ['red', 'blue']).set(
-                        title='Transpiration', xlabel = 'Month', ylabel="TRA (mm/day)")
-
-        ax5 = fig1.add_subplot(gs[2, :]).xaxis.set_major_formatter(date_form)
-        sns.lineplot(data=df, x = 'day', y = 'SM', hue = 'type', errorbar=None, legend=False,
-                    palette = ['red', 'blue']).set(
-                        title='Soil Moisture', xlabel = 'Month', ylabel="SM (-)")
-        sns.lineplot(data=df_results_wlp, x = 'day', y = 'smw', errorbar=None, legend=True, color="grey",
-                        linewidth = 1)  
+    with col42:  
         
-                        
-        fig1.suptitle('Crop gaps {}'.format(year)) # or plt.suptitle('Main title')    
-        st.pyplot(fig1)
+        ### Fig 1 
+        fig1 = make_subplots(
+            rows=3, cols=2,
+            specs=[[{}, {}],
+                   [{}, {}],
+                   [{"colspan": 2}, None]],
+            subplot_titles=('Total above ground production',
+                            'Leaf area index',
+                            'Total weight of storage organs',
+                            'Transpiration',
+                            'Soil Moisture'))
+
+        fig1.add_trace(
+            go.Scatter(x=df_wlp["day"], 
+                       y=df_wlp["TAGP"],
+                       line=dict(color="#b60018")),
+            row=1, col=1)
+        fig1.add_trace(
+            go.Scatter(x=df_pp["day"], 
+                       y=df_pp["TAGP"],
+                       line=dict(color="#0018b6")),
+            row=1, col=1)
+
+        fig1.add_trace(
+            go.Scatter(x=df_wlp["day"], 
+                       y=df_wlp["LAI"],
+                       line=dict(color="#b60018")),
+            row=1, col=2)
+        fig1.add_trace(
+            go.Scatter(x=df_pp["day"], 
+                       y=df_pp["LAI"],
+                       line=dict(color="#0018b6")),
+            row=1, col=2)
+        
+        fig1.add_trace(
+            go.Scatter(x=df_wlp["day"], 
+                       y=df_wlp["TWSO"],
+                       line=dict(color="#b60018")),
+            row=2, col=1)
+        fig1.add_trace(
+            go.Scatter(x=df_pp["day"], 
+                       y=df_pp["TWSO"],
+                       line=dict(color="#0018b6")),
+            row=2, col=1)
+        
+        fig1.add_trace(
+            go.Scatter(x=df_wlp["day"], 
+                       y=df_wlp["TRA"],
+                       line=dict(color="#b60018")),
+            row=2, col=2)
+        fig1.add_trace(
+            go.Scatter(x=df_pp["day"], 
+                       y=df_pp["TRA"],
+                       line=dict(color="#0018b6")),
+            row=2, col=2)
+        
+        fig1.add_trace(
+            go.Scatter(x=df_wlp["day"], 
+                       y=df_wlp["SM"],
+                       line=dict(color="#b60018")),
+            row=3, col=1)
+        fig1.add_trace(
+            go.Scatter(x=df_pp["day"], 
+                       y=df_pp["SM"],
+                       line=dict(color="#0018b6")),
+            row=3, col=1)
+        fig1.add_trace(
+            go.Scatter(x=df_results_wlp["day"], 
+                       y=df_results_wlp["smw"],
+                       line=dict(color="grey")),
+            row=3, col=1)
+        
+        fig1.update_yaxes(title_text="TAGP (Mg/ha)", row=1, col=1)
+        fig1.update_yaxes(title_text="LAI (-)", row=1, col=2)
+        fig1.update_yaxes(title_text="TWSO (Mg/ha)", row=2, col=1)
+        fig1.update_yaxes(title_text="TRA (mm/day)", row=2, col=2)
+        fig1.update_yaxes(title_text="SM (-)", range=[0, 0.5], row=3, col=1)
+
+        fig1.update_layout(showlegend=False, 
+                           title_text='Crop gaps {}'.format(year), 
+                           height=900)    
+        st.plotly_chart(fig1)
         
         ### Fig 2
         weather = df_weather
         weather["RAIN"] = weather["RAIN"]*10
         weather["ET0"] = weather["ET0"]*10
-        weather["TEMP"] = (weather["TMAX"] +  weather["TMIN"])/2    
+        weather["TEMP"] = (weather["TMAX"] +  weather["TMIN"])/2   
         
-        fig2 = plt.figure(constrained_layout=True)
-        gs = GridSpec(3, 1, figure=fig2)
-        fig2.subplots_adjust(hspace=0.5, wspace=0.35)
-        date_form = DateFormatter("%m")
+        fig2 = make_subplots(
+            rows=3, cols=1,
+            subplot_titles=('Precipitation',
+                            'Temperature',
+                            'Evapotranspiration'))
+
+        fig2.add_trace(
+            go.Scatter(x=weather["DAY"], 
+                       y=weather["RAIN"],
+                       line=dict(color="#0018b6")),
+            row=1, col=1)  
         
-        ax1 = fig2.add_subplot(gs[0, 0]).xaxis.set_major_formatter(date_form)
-        sns.lineplot(data=weather, x = 'DAY', y = 'RAIN', errorbar=None, color = 'blue',legend=False,
-                    ).set(title='Precipitation', xlabel = None, xticklabels=[],
-                            ylabel = "P (mm/day)")
+        fig2.add_trace(
+            go.Scatter(x=weather["DAY"], 
+                       y=weather["TEMP"],
+                       line=dict(color="#0018b6")),
+            row=2, col=1)
+        fig2.add_trace(
+            go.Scatter(x=weather["DAY"], 
+                       y=weather["TMAX"],
+                       line=dict(color="grey",
+                                 width = 0.5)),
+            row=2, col=1)
+        fig2.add_trace(
+            go.Scatter(x=weather["DAY"], 
+                       y=weather["TMIN"],
+                       line=dict(color="grey",
+                                 width = 0.5)),
+            row=2, col=1)
         
-        ax2 = fig2.add_subplot(gs[1, 0]).xaxis.set_major_formatter(date_form)
-        sns.lineplot(data=weather, x = 'DAY', y = 'TEMP', errorbar=None, legend=False, color="blue",
-                    ).set(title='Temperature', xlabel = None, xticklabels=[],
-                            ylabel = "T (Celcius)")
-        sns.lineplot(data=weather, x = 'DAY', y = 'TMIN', errorbar=None, legend=False, color="grey",
-                        linewidth = 0.5).set(title='Temperature', xlabel = None, xticklabels=[],
-                            ylabel = "T (Celcius)")    
-        sns.lineplot(data=weather, x = 'DAY', y = 'TMAX', errorbar=None, legend=False, color="grey",
-                        linewidth = 0.5).set(title='Temperature', xlabel = None, xticklabels=[],
-                            ylabel = "T (Celcius)")    
+        fig2.add_trace(
+            go.Scatter(x=weather["DAY"], 
+                       y=weather["ET0"],
+                       line=dict(color="#0018b6")),
+            row=3, col=1)  
+        
+        fig2.update_yaxes(title_text="P (mm/day)", row=1, col=1)
+        fig2.update_yaxes(title_text="T (Celcius)", row=2, col=1)
+        fig2.update_yaxes(title_text="ET0 (mm/day)", row=3, col=1)
 
         
-        ax3 = fig2.add_subplot(gs[2, 0]).xaxis.set_major_formatter(date_form)
-        sns.lineplot(data=weather, x = 'DAY', y = 'ET0', errorbar=None, legend=False,color="blue",
-                    ).set(title='Potential Evapotranspiration {}'.format(year), xlabel = "Month",
-                            ylabel = "ET0 (mm/day)")  
-                    
-        fig2.suptitle('Weather variables {}'.format(year)) 
-        st.pyplot(fig2)
+        fig2.update_layout(showlegend=False, 
+                           title_text='Weather {}'.format(year), 
+                           height=900)        
+            
+        st.plotly_chart(fig2)     
 
-   
 
 st.write(
 """
 
 <style>
-r { color: Red }
+r { color: #b60018 }
 z { color: Blue }
 </style>
 
