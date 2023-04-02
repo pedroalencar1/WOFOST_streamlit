@@ -122,23 +122,24 @@ with col1:
                     step=0.1,format="%.1f")
     
     df = pd.DataFrame({'lat': [lat], 'lon': [lon]})
-    # st.map(df, zoom = 4.5)
+    st.map(df, zoom = 4.5)
     
+    # test map plotly
     # screen_width = pyautogui.size()[0]
-    root = Tkinter.Tk()
-    screen_width = root.winfo_screenwidth()
+    # root = Tkinter.Tk()
+    # screen_width = root.winfo_screenwidth()
 
-    fig = px.scatter_mapbox(df, lat="lat", lon="lon", zoom=4, size = "lon",
-                            height=320, width = 0.285*screen_width,
-                            color_discrete_sequence=["#b60018"],
-                            size_max = 8)
+    # fig = px.scatter_mapbox(df, lat="lat", lon="lon", zoom=4, size = "lon",
+    #                         height=320, width = 0.285*screen_width,
+    #                         color_discrete_sequence=["#b60018"],
+    #                         size_max = 8)
     # "open-street-map", "carto-positron", "carto-darkmatter", 
     # "stamen-terrain", "stamen-toner" or "stamen-watercolor" 
-    fig.update_layout(mapbox_style="carto-positron")
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    # fig.update_layout(mapbox_style="carto-positron")
+    # fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     # fig.show()  
     
-    st.plotly_chart(fig)
+    # st.plotly_chart(fig)
               
 with col2:
     st.write('<p style="font-size:20px"><b>Crop and soil</b></p>',
