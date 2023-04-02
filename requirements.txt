@@ -9,4 +9,3 @@ pcse
 PyYAML
 plotly
 tk
-pyautogui
