@@ -36,11 +36,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import plotly.express as px
 # import pyautogui
-import Tkinter
-
-
-
-
+# import Tkinter
 
 # data
 import pandas as pd
