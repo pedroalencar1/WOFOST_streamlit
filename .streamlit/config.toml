@@ -1,5 +1,5 @@
 [theme]
-base="dark"
-
-[mapbox]
-token = "pk.eyJ1IjoicGVkcm9hbGVuY2FyIiwiYSI6ImNsZnc4NG96dzA5dmozZm8wemx4ZDkxNW0ifQ.6DhqXE285rknat08EuWc1w"
+base="light"
+primaryColor="#b60018"
+secondaryBackgroundColor="#dfe9ea"
+textColor="#121212"

@@ -32,12 +32,11 @@ import matplotlib.dates as mpldates
 from matplotlib.gridspec import GridSpec
 from matplotlib.dates import DateFormatter
 import seaborn as sns
-# import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import plotly.express as px
-# import pyautogui
-import Tkinter
+import pyautogui
+# import Tkinter
 
 
 
@@ -125,9 +124,9 @@ with col1:
     df = pd.DataFrame({'lat': [lat], 'lon': [lon]})
     # st.map(df, zoom = 4.5)
     
-    # screen_width = pyautogui.size()[0]
-    root = Tkinter.Tk()
-    screen_width = root.winfo_screenwidth()
+    screen_width = pyautogui.size()[0]
+    # root = Tkinter.Tk()
+    # screen_width = root.winfo_screenwidth()
 
     fig = px.scatter_mapbox(df, lat="lat", lon="lon", zoom=4, size = "lon",
                             height=320, width = 0.285*screen_width,
