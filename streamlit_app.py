@@ -21,7 +21,7 @@ st.set_page_config(layout="wide")
 # st.echarts(options=options,map=map, height = "500px")
 
 
-# system 
+#%% system 
 import sys, os
 
 # plotting
@@ -54,8 +54,7 @@ from pcse.fileinput import CABOWeatherDataProvider
 from pcse.util import WOFOST72SiteDataProvider
 from pcse.base import ParameterProvider
 from pcse.models import Wofost72_WLP_FD, Wofost72_PP
-
-# local imports
+#%%
 # from location import location_server, location_ui # creates map input - Source:https://github.com/rstudio/py-shiny/tree/main/examples/airmass
 import auxiliar_functions_wofost as afw # auxiliar functions 
  
@@ -161,7 +160,7 @@ with col2:
                          step=0.1,format="%.1f")
     crop_type = st.selectbox(label = "Crop type",
                         options = crop_types,
-                        index = 15,
+                        index = 7,
                         key = "crop_type") 
     
     varieties_ = list(filter(lambda k: crop_type.upper() in k.upper(), varieties))
@@ -495,7 +494,7 @@ and is independent of the WOFOST developing group.
 
 All information used is open source. The WOFOST model can be accessed at https://github.com/ajwdewit/pcse. 
 Weather data from [DWD](https://www.dwd.de/DE/Home/home_node.html). The script for this app is available at
-the author's github.
+the [author's github](https://github.com/pedroalencar1).
 
 """,
 unsafe_allow_html=True
