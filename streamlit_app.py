@@ -93,7 +93,7 @@ with coltitle:
 with colfig1:
     st.write("  ")
     st.write("  ")
-    st.image("figures/logo.png", use_column_width= True)   
+    st.image("figures/logo.png", use_container_width= True)   
 
 #%% input columns
 
