@@ -46,12 +46,12 @@ import timestamp as ts
 
 # wofost 
 import pcse
-from pcse.fileinput import CABOFileReader
-from pcse.fileinput import YAMLAgroManagementReader
-from pcse.fileinput import YAMLCropDataProvider
-from pcse.fileinput import ExcelWeatherDataProvider
-from pcse.fileinput import CABOWeatherDataProvider
-from pcse.util import WOFOST72SiteDataProvider
+from pcse.input import CABOFileReader
+from pcse.input import YAMLAgroManagementReader
+from pcse.input import YAMLCropDataProvider
+from pcse.input import ExcelWeatherDataProvider
+from pcse.input import CABOWeatherDataProvider
+from pcse.input import WOFOST72SiteDataProvider
 from pcse.base import ParameterProvider
 from pcse.models import Wofost72_WLP_FD, Wofost72_PP
 #%%
